@@ -12,60 +12,67 @@ Docs: [docs.devwithlando.io](//docs.devwithlando)
 
 
 
-## Sixty Second Demo
+## 60 Second Demo
 
-[find appropriate gif]
-
-[check this section, and run through it, a few times]
+![Lando jumps to hyperspace](https://media.giphy.com/media/2SRvACIOCEOys/giphy.gif)
 
 
-## Pre-requisites
+## Prerequisites
 
 * [Download and install Lando.](//github.com/lando/lando/releases)
 * Windows: you need Hyper-V enabled.
 * Windows and OSX: installer bundles with Docker.
-* Linux: `sudo apt install docker-ce`.
-<br><small>(That one Arch user can go compile it manually from source. Easy as.)</small>
+* Linux: you need to install Docker.
+``` fish
+sudo apt install docker-ce
+```
+<small>(That one Arch user can go compile it manually from source. Easy as.)</small>
 
 
-## Nearly done!
+## Engage the Hyperdrive
+
+Using nothing but Lando:
+
+<small>(no git, php, composer, etc, on the system)</small>
 
 ``` fish
-mkdir one-minute && cd one-minute
-lando init --recipe=drupal8 --webroot="." --name="one-minute"
+mkdir demo && cd demo
+lando init --recipe=drupal8 --webroot="drupal/web" --name="demo"
 lando start
-lando ssh -c "composer create-project sparksinteractive/sector-project ."
+lando composer create-project sparksinteractive/sector-project drupal
 ```
+<small>
+* You'll likely run a *git clone* instead of *mkdir* and *composer*.
+* If the project contains a *.lando.yml*, you just need to run *lando start*.
+* The *lando init* command will also interactively prompt you for options.
 
-You'd likely run a git checkout instead of the `mkdir` and `composer` commands.
-
-If the project contains a `.lando.yml`, you just need to run `lando start`.
-
-The `lando init` command will also interactively prompt you for options.
+</small>
 
 
 ## Let's visit the site
 
-[http://drupal-meetup-demo.lndo.site:8000](http://drupal-meetup-demo.lndo.site:8000)
+[http://demo.lndo.site:8000](http://demo.lndo.site:8000)
 
 There is also HTTPS, and if you don't have a local Apache running you won't be assigned the port number.
 
 
-## Enter DB credentials and wait for your site to install.
+## Enter DB credentials and install Drupal.
 
-For D7, creds default to "drupal7@drupal7:drupal7/database. [Check that format LOL]
-
-You can view any config you need by running `lando info`.
-
-You can import a DB into the default database container with `lando db-import`. There is a matching export command and you can obviously also specify the database if you have more than one on a project.
+* For D8, creds default to "drupal7@drupal7:drupal7@database. [Check that format.]
+* You can view any config you need by running *lando info*.
+* You can quickly import and export with *lando db-import* and *lando db-export*.
+* You can change the defaults and also configure as many DBs as you need.
 
 
 ## Done
 
+![Yeah!](https://media.giphy.com/media/93qGSbfayiid2/giphy.gif)
+
 How's that for developer onboarding?
 
 
-## Let's do it again, but faster and with an existing project.
+
+## Demo with an existing project
 
 * We've got Lando installed already.
 * Git checkout the project.
@@ -80,8 +87,9 @@ How's that for developer onboarding?
 * Uses Docker, but makes the containers talk to each other nicely.
 
 
-## .lando.yml - one config file to rule them all
+## One config file to rule them all
 
+* .lando.yml
 * Can load in a docker-composer.yml
 * Can load in my.cnf, php.ini, etc.
 * Where things are located ~/.lando and stuff, location of DB on disk.
@@ -109,6 +117,8 @@ How's that for developer onboarding?
 ## Config
 
 
+## Tooling
+
 
 ## Debugging
 
@@ -127,3 +137,9 @@ How's that for developer onboarding?
 * I find it much easier to still have a local and global copies of PHP, Composer, Drush, and other tools (e.g. Platform CLI, Pantheon CLI.)
 * NGINX gateway 504s?
 * Disk space... make Docker put all the things in custom directories?
+
+
+
+## Questions?
+
+![See ya](https://theplaylist.net/wp-content/uploads/2017/12/Lando-Calrissian-Jedi-Billy-Dee-Williams-1200x520.jpg)

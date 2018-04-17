@@ -1,14 +1,37 @@
 ## Lando
 ### the best local dev in the galaxy
 
-Install: [github.com/lando/lando](//github.com/lando/lando)
+Install: [github.com/lando/lando](https://github.com/lando/lando)
 
-Docs: [docs.devwithlando.io](//docs.devwithlando)
+Docs: [docs.devwithlando.io](https://docs.devwithlando.io)
 <br><small>*(Seriously, read the docs)*</small>
 
 <small>by Dieuwe de Boer</small>
 <br>
 <small>Sparks Interactive</small>
+
+
+
+## What is Lando?
+
+![Check it out](https://uproxx.files.wordpress.com/2016/08/lando-han-solo.jpg)
+
+
+>Lando is for developers who want to quickly specify and painlessly
+>spin up the services and tools needed to develop their projects.
+>It's a free, open source, cross-platform, local development
+>environment and DevOps tool built on Docker container technology ...
+
+
+## Features
+
+* Easily mimic your production environment locally.
+* Standardize your teams dev environments and tooling on OSX, Windows and Linux.
+* Integrate with hosting providers like Pantheon.
+* Store all of the above in a version controlled config file called *.lando.yml*.
+* Easily customize or extend tooling, deployment options and basically
+  any other functionality.
+* Free yourself from the tyranny of inferior local development products.
 
 
 
@@ -51,16 +74,20 @@ lando composer create-project sparksinteractive/sector-project drupal
 
 ## Let's visit the site
 
-[http://demo.lndo.site:8000](http://demo.lndo.site:8000)
+[http://demo.lndo.site:8080](http://demo.lndo.site:8080)
 
-There is also HTTPS, and if you don't have a local Apache running you won't be assigned the port number.
+* You can access via localhost.
+* There are also untrusted HTTPS links generated.
+* Lando will run from port 80 if it can.
+* We'll talk about *<>.lndo.site* and custom URLs later.
 
 
-## Enter DB credentials and install Drupal.
+## Install Drupal
 
-* For D8, creds default to "drupal7@drupal7:drupal7@database. [Check that format.]
-* You can view any config you need by running *lando info*.
-* You can quickly import and export with *lando db-import* and *lando db-export*.
+* A default DB server (*database*) is created, with a database (*drupal8*)
+  that you can access as user *drupal8* with password *drupal8*.
+* You can view all config with *lando info*.
+* You can quickly import and export the DB with *lando db-import* and *lando db-export*.
 * You can change the defaults and also configure as many DBs as you need.
 
 
@@ -74,17 +101,27 @@ How's that for developer onboarding?
 
 ## Demo with an existing project
 
-* We've got Lando installed already.
-* Git checkout the project.
-* Drush sql-dump.
-* Lando db-import
-* [or from platform?]
+<small>(assuming host machine has git and global drush with aliases)</small>
+
+``` fish
+git clone hvtbq2bsensg6@git.au.platform.sh:hvtbq2bsensg6.git sector.org.nz
+cd sector.org.nz
+lando init
+lando start
+drush @sector-org-nz.master sql-dump > sector.sql
+lando db-import sector.sql
+```
+
+<small>(you cannot import files outside of the lando root)</small>
 
 
 
 ## How it Works
 
-* Uses Docker, but makes the containers talk to each other nicely.
+* Lando is a wrapper for Docker that handles all the hard stuff like
+  networking and making containers talk to each other.
+* The docs are very good, let's [read the
+  basics](https://docs.devwithlando.io/started.html).
 
 
 ## One config file to rule them all
@@ -102,44 +139,56 @@ How's that for developer onboarding?
 * Add it to your /etc/hosts if you want to be 100% offline.
 * There are always localhost ports for all services.
 * You can route through any custom URL in your /etc/hosts or intranet DNS mask.
+* There is a "share" command. It's slow.
 
 
 ## Recipes
 
-* Supports Drupal7 and Drupal8, also supports Pantheon specifically.
-
+* Lando supports a very large set of languages and frameworks.
+* D6, D7, D8.
+* Demo *lando init pantheon*.
 
 ## Services
 
-* Services, multiple DBs and mailhog.
+* Switch between *apache* and *nginx* with a single line change.
+* Demo mailhog.
+* Demo multiple DBs.
 
 
 ## Config
 
+* Demo custom *php.ini* and custom *my.cnf*.
+
 
 ## Tooling
+
+* Show platform tool and also the official example.
 
 
 ## Debugging
 
-* rebuilding, docker prune
-* xDebug in action
 * lando logs
+* lando rebuild
+* docker system prune
+* xDebug in action
 
 
-## Custom Recipes and Commands?
+## Issues and Thoughts
 
-* Pantheon special. You can do this yourself.
-
-
-## Notes
-
-* I find it much easier to still have a local and global copies of PHP, Composer, Drush, and other tools (e.g. Platform CLI, Pantheon CLI.)
+* I find it much easier to still have a local and global copies of
+  PHP, Composer, Drush, and other tools (e.g. Platform CLI, Pantheon
+  CLI.)
 * NGINX gateway 504s?
 * Disk space... make Docker put all the things in custom directories?
+* Drush aliases.
+* Modify anything in the containers manually and that will be lost on
+  rebuild, but your filesystem and database will continue to persist.
 
 
 
 ## Questions?
 
 ![See ya](https://theplaylist.net/wp-content/uploads/2017/12/Lando-Calrissian-Jedi-Billy-Dee-Williams-1200x520.jpg)
+
+
+![It's a wrap](https://i.imgflip.com/28itn8.jpg)

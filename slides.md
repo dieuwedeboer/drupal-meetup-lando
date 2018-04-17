@@ -74,7 +74,7 @@ lando composer create-project sparksinteractive/sector-project drupal
 
 ## Let's visit the site
 
-[http://demo.lndo.site:8080](http://demo.lndo.site:8080)
+[http://demo.lndo.site:8000](http://demo.lndo.site:8000)
 
 * You can access via localhost.
 * There are also untrusted HTTPS links generated.
@@ -101,86 +101,111 @@ How's that for developer onboarding?
 
 ## Demo with an existing project
 
-<small>(assuming host machine has git and global drush with aliases)</small>
+<small>(Assuming host machine has ssh and git installed, and you have a drush
+alias file handy.)</small>
 
 ``` fish
-git clone hvtbq2bsensg6@git.au.platform.sh:hvtbq2bsensg6.git sector.org.nz
-cd sector.org.nz
-lando init
+# Get the codebase up and running
+git clone p6i7ccbqjxxae@git.au.platform.sh:p6i7ccbqjxxae.git yachting-nz
+cd yachting-nz
+lando composer install
+# Hm, we want the DB, but we need access to the alias for that.
+cp ~/.drush/site-aliases/yachting-nz.aliases.drushrc.php drush/
+vi .lando.yml
+# Start lando and import the DB.
 lando start
-drush @sector-org-nz.master sql-dump > sector.sql
-lando db-import sector.sql
+lando drush @yachting-nz.master sql-dump > ynz.sql
+lando db-import ynz.sql
 ```
 
-<small>(you cannot import files outside of the lando root)</small>
+<small>(You cannot import files outside of the lando root.)</small>
+
+
+![Satisfied](https://lumiere-a.akamaihd.net/v1/images/Lando-Calrissian_a679fe1e.jpeg)
 
 
 
 ## How it Works
 
-* Lando is a wrapper for Docker that handles all the hard stuff like
+Lando is a wrapper for Docker Compose that handles all the hard stuff like
   networking and making containers talk to each other.
-* The docs are very good, let's [read the
+
+The docs are very good, let's [read the
   basics](https://docs.devwithlando.io/started.html).
 
 
-## One config file to rule them all
+## Locations and Files
 
-* .lando.yml
-* Can load in a docker-composer.yml
-* Can load in my.cnf, php.ini, etc.
-* Where things are located ~/.lando and stuff, location of DB on disk.
-* Custom URls, php.ini, my.cnf, use apache or nginx, php versions
+* *.lando.yml* controls the virual hardware.
+* Your codebase and database are mounted to the virtual container.
+* Your DB lives in */var* somewhere.
+* Lando keeps any core/global stuff in *~/.lando*.
 
 
 ## *.lndo.site
 
-* URL that they own, but DNS set to 127.0.0.1
-* Add it to your /etc/hosts if you want to be 100% offline.
+* Their domain, but its DNS is set to 127.0.0.1, so it bounced back to you.
+* Add it to your */etc/hosts* if you want to be 100% offline.
 * There are always localhost ports for all services.
-* You can route through any custom URL in your /etc/hosts or intranet DNS mask.
-* There is a "share" command. It's slow.
+* You can route through any custom URL in your */etc/hosts* or intranet DNS mask.
+* There is a *share* command. It's slow.
 
 
 ## Recipes
 
 * Lando supports a very large set of languages and frameworks.
 * D6, D7, D8.
-* Demo *lando init pantheon*.
+* Special recipes. E.g. *lando init pantheon*.
+
 
 ## Services
 
-* Switch between *apache* and *nginx* with a single line change.
+>Services are the "atomic unit" of Lando. They are self-contained
+>Docker containers that can be easily customized in the .lando.yml
+>file and when combined together with other services, tooling and
+>proxy config can form recipes.
+
 * Demo mailhog.
 * Demo multiple DBs.
 
 
 ## Config
 
+* Lando gives you very fine control over every aspect of configuration.
+* Switch between *apache* and *nginx* with a single line change.
 * Demo custom *php.ini* and custom *my.cnf*.
 
 
 ## Tooling
 
-* Show platform tool and also the official example.
+``` fish
+# The following entry creates a `lando platform` command that will run
+# any Platform CLI command from inside the container if desired.
+tooling:
+  platform:
+    service: appserver
+    description: Run Platform CLI commands
+    cmd:
+      - /var/www/.platformsh/bin/platform
+    options:
+      passthrough: true
+```
 
 
 ## Debugging
 
-* lando logs
-* lando rebuild
-* docker system prune
-* xDebug in action
+* `lando logs`
+* `lando rebuild`
+* `docker system prune`
+* [xDebug](https://docs.devwithlando.io/services/php.html#using-xdebug) is also a thing.
 
 
 ## Issues and Thoughts
 
 * I find it much easier to still have a local and global copies of
-  PHP, Composer, Drush, and other tools (e.g. Platform CLI, Pantheon
-  CLI.)
+  PHP, Composer, Drush, and other tools.
 * NGINX gateway 504s?
-* Disk space... make Docker put all the things in custom directories?
-* Drush aliases.
+* Disk space.
 * Modify anything in the containers manually and that will be lost on
   rebuild, but your filesystem and database will continue to persist.
 
